@@ -1,7 +1,7 @@
 package sample;
 
 import java.util.ArrayList;
-import javafx.collections.ObservableList;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -16,7 +16,7 @@ public class View
     private Group root = new Group();
     private Scene scene = new Scene(this.root, 300.0D, 250.0D, Color.LIGHTGREY);
     private Model model;
-    private Button distrib = new Button();
+    private Button distribution = new Button();
     private Button returned = new Button();
     private Button returnedAll = new Button();
     private Button sort = new Button();
@@ -26,16 +26,13 @@ public class View
     private int pos_y_dog = 700;
     private ArrayList<Picture> pictures = new ArrayList();
     private int iterator_returned = 0;
-    private int iterator_sort = 0;
-    private int aleaCard;
+    private int aleaCard = 0;
 
-    public void init()
-    {
-        for (int i = 1; i <= 21; i++) {
+    public void initialisePicture(){
+        for (int i = 1; i <= 21; i++){
             this.pictures.add(new Picture("file:./ressources-100/" + i + ".jpg", i, TypeCard.Atout));
         }
-        for (int i = 1; i <= 14; i++)
-        {
+        for (int i = 1; i <= 14; i++){
             this.pictures.add(new Picture("file:./ressources-100/" + i + "Carreau.jpg", i, TypeCard.Carreau));
             this.pictures.add(new Picture("file:./ressources-100/" + i + "Pique.jpg", i, TypeCard.Pique));
             this.pictures.add(new Picture("file:./ressources-100/" + i + "Trefle.jpg", i, TypeCard.Trefle));
@@ -50,9 +47,9 @@ public class View
         this.window.setTitle("Tarot");
         this.window.setFullScreen(true);
 
-        this.distrib.setLayoutX(200.0D);
-        this.distrib.setLayoutY(10.0D);
-        this.distrib.setText("Distribution");
+        this.distribution.setLayoutX(200.0D);
+        this.distribution.setLayoutY(10.0D);
+        this.distribution.setText("Distribution");
         this.returned.setLayoutX(400.0D);
         this.returned.setLayoutY(10.0D);
         this.returned.setText("Retourner");
@@ -63,7 +60,7 @@ public class View
         this.sort.setLayoutY(10.0D);
         this.sort.setText("Trier");
 
-        this.distrib.setOnAction(new EventHandler<ActionEvent>() {
+        this.distribution.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event)
             {
@@ -248,7 +245,7 @@ public class View
             }
         });
 
-        this.root.getChildren().add(this.distrib);
+        this.root.getChildren().add(this.distribution);
         this.root.getChildren().add(this.returned);
         this.root.getChildren().add(this.returnedAll);
         this.root.getChildren().add(this.sort);
@@ -256,22 +253,19 @@ public class View
         this.window.setScene(this.scene);
         this.window.show();
 
-        init();
+        initialisePicture();
     }
 
-    public void update(Card c)
-    {
+    public void update(Card c){
         this.root.getChildren().add(c.getP());
     }
 
-    public void newCardOnHand(int alea)
-    {
-        Card c = new Card((Picture)this.pictures.get(alea - 1), this.pos_x, this.pos_y);
+    public void newCardOnHand(int alea){
+        Card c = new Card(this.pictures.get(alea - 1), this.pos_x, this.pos_y);
         this.model.addCardHand(c);
         update(c);
         this.pos_x += 150;
-        if (this.model.getHand().size() == 9)
-        {
+        if (this.model.getHand().size() == 9) {
             this.pos_y = 250;
             this.pos_x = 150;
         }
