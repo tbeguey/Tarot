@@ -37,6 +37,7 @@ public class Picture
     {
         return this.numero;
     }
+    public void setNumero(int numero){ this.numero = numero;}
 
     public TypeCard getColor()
     {

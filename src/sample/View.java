@@ -91,6 +91,10 @@ public class View
                     model.getHand().get(iterator_returned).getP().changeImage();
                     iterator_returned++;
                 }
+                else {
+                    model.getDog().get(iterator_returned-model.getHand().size()).getP().changeImage();
+                    iterator_returned++;
+                }
             }
         });
 
@@ -135,6 +139,13 @@ public class View
                     }
                 }
                 model.getHand().removeAll(model.getHand());
+                /*
+                model.quickSort(handPique);
+                model.quickSort(handCoeur);
+                model.quickSort(handAtout);
+                model.quickSort(handCarreau);
+                model.quickSort(handTrefle);
+                */
 
                 for (int i = 0; i < handPique.size(); i++) {
                     model.getHand().add(handPique.get(i));
