@@ -28,4 +28,21 @@ public class Card implements Comparable<Card>
     {
         this.p = p;
     }
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+        p.setX(x);
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+        p.setY(y);
+    }
 }

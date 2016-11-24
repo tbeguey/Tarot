@@ -13,9 +13,11 @@ public class Main
     public void start(Stage primaryStage)
             throws Exception
     {
-        this.model = new Model(this.view);
+        this.model = new Model();
         this.view = new View(this.model);
         this.controller = new Controller(this.model, this.view);
+        model.setView(this.view);
+        model.initialiseCardsDeck();
     }
 
     public static void main(String[] args)

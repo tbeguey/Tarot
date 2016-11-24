@@ -2,7 +2,6 @@ package sample;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,13 +21,12 @@ public class View
     private Button returned = new Button();
     private Button returnedAll = new Button();
     private Button sort = new Button();
-    private int pos_x = 150;
-    private int pos_y = 50;
-    private int pos_x_dog = 350;
-    private int pos_y_dog = 700;
+    private int positionCardX = 150;
+    private int positionCardY = 50;
+    private int positionDogX = 350;
+    private int positionDogY = 700;
     private ArrayList<Picture> pictures = new ArrayList();
     private int iterator_returned = 0;
-    private int aleaCard = 0;
 
     public void initialisePicture(){
         for (int i = 1; i <= 21; i++){
@@ -45,10 +43,10 @@ public class View
 
     public View(Model m)
     {
+        initialisePicture();
         this.model = m;
         this.window.setTitle("Tarot");
         this.window.setFullScreen(true);
-
         this.distribution.setLayoutX(200.0D);
         this.distribution.setLayoutY(10.0D);
         this.distribution.setText("Distribution");
@@ -67,21 +65,16 @@ public class View
             public void handle(ActionEvent event)
             {
                 if (model.getPlayers().get(0).getCards().size() == 15 && model.getDog().size() != 6){
-                    aleaCard = (int)(1 + Math.random() * pictures.size());
-                    newCardOnDog(aleaCard);
-                    pictures.remove(pictures.get(aleaCard-1));
+                    model.addCardDog();
                 }
-                for (int i = 1; i <= 3; i++){
-                        if (model.getPlayers().get(0).getCards().size() != 18){
-                            aleaCard = (int)(1 + Math.random() * pictures.size());
-                            newCardOnHand(0, aleaCard);
-                        }
-                        pictures.remove(pictures.get(aleaCard-1));
+                for (int i = 1; i <= 4; i++){
+                    for (int j = 1; j <= 3; j++) {
+                        model.addCardHand(i-1);
+                    }
+
                 }
                 if (model.getPlayers().get(0).getCards().size() != 18 && model.getDog().size() != 6) {
-                aleaCard = (int)(1 + Math.random() * pictures.size());
-                newCardOnDog(aleaCard);
-                pictures.remove(pictures.get(aleaCard-1));
+                    model.addCardDog();
                 }
             }
         });
@@ -117,149 +110,11 @@ public class View
         this.sort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                ArrayList<Card> handPique = new ArrayList();
-                ArrayList<Card> handCoeur = new ArrayList();
-                ArrayList<Card> handCarreau = new ArrayList();
-                ArrayList<Card> handTrefle = new ArrayList();
-                ArrayList<Card> handAtout = new ArrayList();
-                pos_x = 150;
-                pos_y = 50;
-                pos_x_dog = 350;
-                pos_y_dog = 700;
-
-                for (int i = 0; i < model.getPlayers().get(0).getCards().size(); i++) {
-                    if (model.getPlayers().get(0).getCards().get(i).getP().getColor() == TypeCard.Pique) {
-                        handPique.add(model.getPlayers().get(0).getCards().get(i));
-                    } else if (model.getPlayers().get(0).getCards().get(i).getP().getColor() == TypeCard.Coeur) {
-                        handCoeur.add(model.getPlayers().get(0).getCards().get(i));
-                    } else if (model.getPlayers().get(0).getCards().get(i).getP().getColor() == TypeCard.Atout) {
-                        handAtout.add(model.getPlayers().get(0).getCards().get(i));
-                    } else if (model.getPlayers().get(0).getCards().get(i).getP().getColor() == TypeCard.Carreau) {
-                        handCarreau.add(model.getPlayers().get(0).getCards().get(i));
-                    } else if (model.getPlayers().get(0).getCards().get(i).getP().getColor() == TypeCard.Trefle) {
-                        handTrefle.add(model.getPlayers().get(0).getCards().get(i));
-                    }
-                }
-                model.getPlayers().get(0).getCards().removeAll(model.getPlayers().get(0).getCards());
-
-                Collections.sort(handPique);
-                Collections.sort(handCoeur);
-                Collections.sort(handAtout);
-                Collections.sort(handCarreau);
-                Collections.sort(handTrefle);
-
-                for (int i = 0; i < handPique.size(); i++) {
-                    model.getPlayers().get(0).getCards().add(handPique.get(i));
-                    handPique.get(i).getP().setX(pos_x);
-                    handPique.get(i).getP().setY(pos_y);
-                    pos_x +=150;
-                    if (model.getPlayers().get(0).getCards().size() == 9) {
-                        pos_x = 150;
-                        pos_y = 250;
-                    }
-                }
-
-                for (int i = 0; i < handCoeur.size(); i++) {
-                    model.getPlayers().get(0).getCards().add(handCoeur.get(i));
-                    handCoeur.get(i).getP().setX(pos_x);
-                    handCoeur.get(i).getP().setY(pos_y);
-                    pos_x +=150;
-                    if (model.getPlayers().get(0).getCards().size() == 9) {
-                        pos_x = 150;
-                        pos_y = 250;
-                    }
-                }
-
-                for (int i = 0; i < handAtout.size(); i++) {
-                    model.getPlayers().get(0).getCards().add(handAtout.get(i));
-                    handAtout.get(i).getP().setX(pos_x);
-                    handAtout.get(i).getP().setY(pos_y);
-                    pos_x +=150;
-                    if (model.getPlayers().get(0).getCards().size() == 9) {
-                        pos_x = 150;
-                        pos_y = 250;
-                    }
-                }
-
-                for (int i = 0; i < handCarreau.size(); i++) {
-                    model.getPlayers().get(0).getCards().add(handCarreau.get(i));
-                    handCarreau.get(i).getP().setX(pos_x);
-                    handCarreau.get(i).getP().setY(pos_y);
-                    pos_x +=150;
-                    if (model.getPlayers().get(0).getCards().size() == 9) {
-                        pos_x = 150;
-                        pos_y = 250;
-                    }
-                }
-
-                for (int i = 0; i < handTrefle.size(); i++) {
-                    model.getPlayers().get(0).getCards().add(handTrefle.get(i));
-                    handTrefle.get(i).getP().setX(pos_x);
-                    handTrefle.get(i).getP().setY(pos_y);
-                    pos_x +=150;
-                    if (model.getPlayers().get(0).getCards().size() == 9) {
-                        pos_x = 150;
-                        pos_y = 250;
-                    }
-                }
-                handPique.removeAll(handPique);
-                handCoeur.removeAll(handCoeur);
-                handAtout.removeAll(handAtout);
-                handCarreau.removeAll(handCarreau);
-                handTrefle.removeAll(handTrefle);
-
-                for (int i = 0; i < model.getDog().size(); i++) {
-                    if (model.getDog().get(i).getP().getColor() == TypeCard.Pique) {
-                        handPique.add(model.getDog().get(i));
-                    } else if (model.getDog().get(i).getP().getColor() == TypeCard.Coeur) {
-                        handCoeur.add(model.getDog().get(i));
-                    } else if (model.getDog().get(i).getP().getColor() == TypeCard.Atout) {
-                        handAtout.add(model.getDog().get(i));
-                    } else if (model.getDog().get(i).getP().getColor() == TypeCard.Carreau) {
-                        handCarreau.add(model.getDog().get(i));
-                    } else if (model.getDog().get(i).getP().getColor() == TypeCard.Trefle) {
-                        handTrefle.add(model.getDog().get(i));
-                    }
-                }
-
-                model.getDog().removeAll(model.getDog());
-
-                Collections.sort(handPique);
-                Collections.sort(handCoeur);
-                Collections.sort(handAtout);
-                Collections.sort(handCarreau);
-                Collections.sort(handTrefle);
-
-                for (int i = 0; i < handPique.size(); i++){
-                    model.getDog().add(handPique.get(i));
-                    handPique.get(i).getP().setX(pos_x_dog);
-                    handPique.get(i).getP().setY(pos_y_dog);
-                    pos_x_dog += 150;
-                }
-                for (int i = 0; i < handCoeur.size(); i++){
-                    model.getDog().add(handCoeur.get(i));
-                    handCoeur.get(i).getP().setX(pos_x_dog);
-                    handCoeur.get(i).getP().setY(pos_y_dog);
-                    pos_x_dog += 150;
-                }
-                for (int i = 0; i < handAtout.size(); i++){
-                    model.getDog().add(handAtout.get(i));
-                    handAtout.get(i).getP().setX(pos_x_dog);
-                    handAtout.get(i).getP().setY(pos_y_dog);
-                    pos_x_dog += 150;
-                }
-                for (int i = 0; i < handCarreau.size(); i++){
-                    model.getDog().add(handCarreau.get(i));
-                    handCarreau.get(i).getP().setX(pos_x_dog);
-                    handCarreau.get(i).getP().setY(pos_y_dog);
-                    pos_x_dog += 150;
-                }
-                for (int i = 0; i < handTrefle.size(); i++){
-                    model.getDog().add(handTrefle.get(i));
-                    handTrefle.get(i).getP().setX(pos_x_dog);
-                    handTrefle.get(i).getP().setY(pos_y_dog);
-                    pos_x_dog += 150;
-                }
+                positionCardX = 150;
+                positionCardY = 50;
+                positionDogX = 350;
+                positionDogY = 700;
+                model.sortDeck();
             }
         });
 
@@ -270,30 +125,54 @@ public class View
 
         this.window.setScene(this.scene);
         this.window.show();
-
-        initialisePicture();
     }
 
-    public void update(Card c){
+    public void update(Card c, boolean Hand){
+        if(Hand){
+            c.setX(positionCardX);
+            c.setY(positionCardY);
+            this.positionCardX += 150;
+            if (this.model.getPlayers().get(0).getCards().size() == 9) {
+                this.positionCardY = 250;
+                this.positionCardX = 150;
+            }
+        }
+        else{
+            c.setX(positionDogX);
+            c.setY(positionDogY);
+            this.positionDogX +=150;
+        }
         this.root.getChildren().add(c.getP());
     }
 
-    public void newCardOnHand(int idPlayer, int alea) {
-        Card c = new Card(this.pictures.get(alea - 1), this.pos_x, this.pos_y);
-        this.model.addCardHand(idPlayer, c);
-        update(c);
-        this.pos_x += 150;
-        if (this.model.getPlayers().get(0).getCards().size() == 9) {
-            this.pos_y = 250;
-            this.pos_x = 150;
-        }
+    public ArrayList<Picture> getPictures() {
+        return pictures;
+    }
+    public int getPositionCardX() {
+        return positionCardX;
+    }
+    public int getPositionCardY() {
+        return positionCardY;
+    }
+    public int getPositionDogX() {
+        return positionDogX;
+    }
+    public int getPositionDogY() {
+        return positionDogY;
+    }
+    public void setPositionCardX(int positionCardX) {
+        this.positionCardX = positionCardX;
     }
 
-    public void newCardOnDog(int alea)
-    {
-        Card c = new Card(this.pictures.get(alea - 1), this.pos_x_dog, this.pos_y_dog);
-        this.model.addCardDog(c);
-        update(c);
-        this.pos_x_dog += 150;
+    public void setPositionCardY(int positionCardY) {
+        this.positionCardY = positionCardY;
+    }
+
+    public void setPositionDogX(int positionDogX) {
+        this.positionDogX = positionDogX;
+    }
+
+    public void setPositionDogY(int positionDogY) {
+        this.positionDogY = positionDogY;
     }
 }
