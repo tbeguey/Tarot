@@ -1,6 +1,6 @@
 package sample;
 
-public class Card
+public class Card implements Comparable<Card>
 {
     private Picture p;
     private int x;
@@ -15,6 +15,10 @@ public class Card
         p.setY(y);
     }
 
+    @Override
+    public int compareTo(Card c){
+        return this.getP().getNumero()-c.getP().getNumero();
+    }
     public Picture getP()
     {
         return this.p;
