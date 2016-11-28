@@ -1,16 +1,17 @@
 package sample;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Model
-{
+public class Model extends java.util.Observable {
     private View view;
-    //private ArrayList<Card> hand = new ArrayList();
     private ArrayList<Card> cardsDeck = new ArrayList<>();
     private ArrayList<Card> dog = new ArrayList();
-
     private ArrayList<Player> players = new ArrayList<>();
+    private boolean littleDry = false;
 
     public Model() {
         Player p1 = new Player();
@@ -46,6 +47,7 @@ public class Model
 
     public void addCardDog() {
         Card c = cardsDeck.get(cardsDeck.size()-1);
+        c.setInDog(true);
         this.dog.add(c);
         view.update(c, false);
         cardsDeck.remove(c);
@@ -203,6 +205,24 @@ public class Model
         handAtout.removeAll(handAtout);
         handCarreau.removeAll(handCarreau);
         handTrefle.removeAll(handTrefle);
+    }
+
+    public void testLittleDry(){
+        if(!littleDry){
+            for(int i=0;i<players.size();i++){
+                int cpt_atout = 0;
+                for(int j=0;j<players.get(i).getCards().size();j++){
+                    if(players.get(i).getCards().get(j).getP().getColor() == TypeCard.Atout){
+                        cpt_atout++;
+                    }
+                }
+                if(cpt_atout < 1)
+                    littleDry = true;
+            }
+        }
+        if(littleDry){
+            System.out.println("PETIT SEC"); // a modifier
+        }
     }
 
     public ArrayList<Player> getPlayers() {

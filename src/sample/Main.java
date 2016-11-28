@@ -15,8 +15,8 @@ public class Main
     {
         this.model = new Model();
         this.view = new View(this.model);
-        this.controller = new Controller(this.model, this.view);
         model.setView(this.view);
+        this.controller = new Controller(this.model, this.view);
         model.initialiseCardsDeck();
     }
 

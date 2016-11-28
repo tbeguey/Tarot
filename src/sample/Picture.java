@@ -3,8 +3,7 @@ package sample;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class Picture
-        extends ImageView
+public class Picture extends ImageView
 {
     private Image image;
     private Image image_cached;
