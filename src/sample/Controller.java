@@ -59,9 +59,10 @@ public class Controller
         view.getTake().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                    for (int i = 0; i < model.getDog().size(); i++) {
-                        model.getDog().get(i).getP().changeImage();
-                    }
+                    model.dogToHand();
+                for (int i = 0; i < model.getPlayers().get(0).getCards().size(); i++) {
+                    model.getPlayers().get(0).getCards().get(i).setPossibilityRemove(true);
+                }
             }
         });
     }

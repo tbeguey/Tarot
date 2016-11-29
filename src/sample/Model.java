@@ -1,8 +1,5 @@
 package sample;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -10,8 +7,10 @@ public class Model extends java.util.Observable {
     private View view;
     private ArrayList<Card> cardsDeck = new ArrayList<>();
     private ArrayList<Card> dog = new ArrayList();
+    private ArrayList<Card> bean = new ArrayList<>(); // servira comme "poubelle" pour les cartes dont le joueur faisant la prise ne veut pas
     private ArrayList<Player> players = new ArrayList<>();
     private boolean littleDry = false;
+    private boolean take = false;
 
     public Model() {
         Player p1 = new Player();
@@ -39,18 +38,31 @@ public class Model extends java.util.Observable {
             Card c = cardsDeck.get(cardsDeck.size()-1);
             players.get(idPlayer).addCardsToAPlayer(c);
             if(idPlayer == 0){
-                view.update(c, true);
+                view.updateAdd(c, true);
             }
             cardsDeck.remove(c);
         }
+    }
+
+    public void removeCardHand(int idPlayer, Card c){ // a tester
+        players.get(idPlayer).removeCardsToAPlayer(c);
+        view.updateRemove(c);
     }
 
     public void addCardDog() {
         Card c = cardsDeck.get(cardsDeck.size()-1);
         c.setInDog(true);
         this.dog.add(c);
-        view.update(c, false);
+        view.updateAdd(c, false);
         cardsDeck.remove(c);
+    }
+
+    public void dogToHand(){ // a tester
+        for(int i=0;i<dog.size();i++){
+            dog.get(i).getP().changeImage();
+            players.get(0).getCards().add(dog.get(i));
+        }
+        dog.clear();
     }
 
     public void sortDeck(){
@@ -74,7 +86,7 @@ public class Model extends java.util.Observable {
             }
         }
         /* Vide le deck du joueur */
-        players.get(0).getCards().removeAll(players.get(0).getCards());
+        players.get(0).getCards().removeAll(players.get(0).getCards()); // utiliser clear?
 
         /* Trie les cartes selon leur nombre */
         Collections.sort(handPique);
@@ -235,5 +247,13 @@ public class Model extends java.util.Observable {
 
     public void setView(View v){
         this.view = v;
+    }
+
+    public boolean isTake() {
+        return take;
+    }
+
+    public void setTake(boolean take) {
+        this.take = take;
     }
 }

@@ -11,10 +11,12 @@ public class Card extends Parent implements Comparable<Card>
     private int x;
     private int y;
     private boolean inDog;
+    private boolean possibilityRemove;
 
     public Card(Picture p, int x, int y)
     {
         inDog = false;
+        possibilityRemove = false;
         this.p = p;
         this.x = x;
         this.y = y;
@@ -27,6 +29,9 @@ public class Card extends Parent implements Comparable<Card>
             public void handle(javafx.scene.input.MouseEvent event) {
                 if(!inDog)
                     p.changeImage();
+                if(possibilityRemove)
+                    getChildren().remove(p);
+                    // le mieux ca serait que j'enleve pas juste l'image mais toute la carte et en la retirant du de la main du joueur
             }
         });
     }
@@ -35,6 +40,7 @@ public class Card extends Parent implements Comparable<Card>
     public int compareTo(Card c){
         return this.getP().getNumero()-c.getP().getNumero();
     }
+
     public Picture getP()
     {
         return this.p;
@@ -56,5 +62,8 @@ public class Card extends Parent implements Comparable<Card>
 
     public void setInDog(boolean inDog) {
         this.inDog = inDog;
+    }
+    public void setPossibilityRemove(boolean possibilityRemove) {
+        this.possibilityRemove = possibilityRemove;
     }
 }

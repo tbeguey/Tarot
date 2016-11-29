@@ -68,7 +68,7 @@ public class View implements Observer{
         this.window.show();
     }
 
-    public void update(Card c, boolean Hand){
+    public void updateAdd(Card c, boolean Hand){
         if(Hand){
             c.setX(positionCardX);
             c.setY(positionCardY);
@@ -84,6 +84,9 @@ public class View implements Observer{
             this.positionDogX +=150;
         }
         this.root.getChildren().add(c);
+    }
+    public void updateRemove(Card c){
+        this.root.getChildren().remove(c);
     }
 
     public ArrayList<Picture> getPictures() {

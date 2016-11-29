@@ -17,6 +17,10 @@ public class Player {
         cards.add(c);
     }
 
+    public void removeCardsToAPlayer(Card c){
+        cards.remove(c);
+    }
+
     public ArrayList<Card> getCards() {
         return cards;
     }
