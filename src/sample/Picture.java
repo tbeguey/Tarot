@@ -22,6 +22,8 @@ public class Picture extends ImageView
         this.color = t;
     }
 
+    public Picture(){}
+
     public void changeImage()
     {
         setImage(this.image);
