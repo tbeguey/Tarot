@@ -71,7 +71,7 @@ public class Model extends java.util.Observable {
         ArrayList<Card> handCarreau = new ArrayList();
         ArrayList<Card> handTrefle = new ArrayList();
         ArrayList<Card> handAtout = new ArrayList();
-        /* Reparti le deck du joueur dans 5 decks différents par rapport à leur couleur */
+        /* Reparti le deck du joueur dans 5 decks différents en fonction de leur couleur */
         for (int i = 0; i < players.get(0).getCards().size(); i++) {
             if (players.get(0).getCards().get(i).getP().getColor() == TypeCard.Pique) {
                 handPique.add(players.get(0).getCards().get(i));
@@ -219,7 +219,7 @@ public class Model extends java.util.Observable {
         handTrefle.removeAll(handTrefle);
     }
 
-    public void testLittleDry(){
+    public void testLittleDry(){ // a tester aussi, je pense pas que ca marche
         if(!littleDry){
             for(int i=0;i<players.size();i++){
                 int cpt_atout = 0;

@@ -1,7 +1,9 @@
 package sample;
 
+import com.sun.java.swing.plaf.motif.resources.motif_de;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 
 public class Controller
 {
@@ -61,7 +63,7 @@ public class Controller
             public void handle(ActionEvent event) {
                     model.dogToHand();
                 for (int i = 0; i < model.getPlayers().get(0).getCards().size(); i++) {
-                    model.getPlayers().get(0).getCards().get(i).setPossibilityRemove(true);
+                    model.getPlayers().get(0).getCards().get(i).changeActionToRemove();
                 }
             }
         });
