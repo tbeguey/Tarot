@@ -6,9 +6,7 @@ import javafx.scene.image.ImageView;
 public class Picture extends ImageView
 {
     private Image image;
-    private Image image_cached;
     private String path;
-    private String path_cachedCard = "file:./ressources-100/cache.jpg";
     private int numero;
     private TypeCard color;
 
@@ -16,29 +14,18 @@ public class Picture extends ImageView
     {
         this.path = path;
         this.image = new Image(this.path);
-        this.image_cached = new Image(this.path_cachedCard);
-        setImage(this.image_cached);
         this.numero = n;
         this.color = t;
+        this.setImage(image);
     }
 
-    public Picture(){}
-
-    public void changeImage()
-    {
-        setImage(this.image);
-    }
-
-    public String getPath()
-    {
-        return this.path;
+    public Picture(){
     }
 
     public int getNumero()
     {
         return this.numero;
     }
-    public void setNumero(int numero){ this.numero = numero;}
 
     public TypeCard getColor()
     {

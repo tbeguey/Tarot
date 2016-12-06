@@ -1,66 +1,91 @@
 package sample;
 
+import javafx.animation.*;
 import javafx.scene.Parent;
-
-import java.awt.event.MouseEvent;
-import java.beans.EventHandler;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.transform.Rotate;
+import javafx.util.Duration;
 
 public class Card extends Parent implements Comparable<Card>
 {
-    private Picture p;
+    private Picture front;
+    private ImageView back = new ImageView();
     private int x;
     private int y;
     private boolean inDog;
-    private static int nbRemove = 0;
+    private static Image image_cached = new Image("file:./ressources-100/cache.jpg");
+    private static long halfFlipDuration = 1000;
+
 
     public Card(Picture p, int x, int y)
     {
         inDog = false;
-        this.p = p;
+        this.front = p;
         this.x = x;
         this.y = y;
-        p.setX(x);
-        p.setY(y);
-        this.getChildren().add(p);
-        this.changeActionToChangeImage();
-    }
+        this.front.setX(x);
+        this.front.setY(y);
+        this.back.setX(x);
+        this.back.setY(y);
+        this.back.setImage(image_cached);
+        this.back.setFitWidth(80);
+        this.back.setFitHeight(170);
+        this.front.setFitWidth(80);
+        this.front.setFitHeight(170);
+        this.getChildren().add(this.front);
+        //this.getChildren().add(this.back);
 
-    public void changeActionToChangeImage(){
         this.setOnMouseClicked(new javafx.event.EventHandler<javafx.scene.input.MouseEvent>() {
             @Override
             public void handle(javafx.scene.input.MouseEvent event) {
                 if(!inDog)
-                    p.changeImage();
+                    flip().play();
             }
         });
     }
 
-    public void changeActionToRemove(){
-        this.setOnMouseClicked(new javafx.event.EventHandler<javafx.scene.input.MouseEvent>() {
-            @Override
-            public void handle(javafx.scene.input.MouseEvent event) {
-                if(nbRemove < 6) {
-                    getChildren().remove(p); // le mieux ca serait que j'enleve pas juste l'image mais toute la carte et en la retirant de la main du joueur
-                    nbRemove++;
-                }
-                // arriver à 6 faut ranger les cartes mais je sais pas comment savoir qu'on est arrivé à 6
-            }
-        });
+    Transition flip() {
+        final RotateTransition rotateOutFront = new RotateTransition(Duration.millis(halfFlipDuration), front);
+        rotateOutFront.setInterpolator(Interpolator.LINEAR);
+        rotateOutFront.setAxis(Rotate.Y_AXIS);
+        rotateOutFront.setFromAngle(0);
+        rotateOutFront.setToAngle(90);
+        //
+        final RotateTransition rotateInBack = new RotateTransition(Duration.millis(halfFlipDuration), back);
+        rotateInBack.setInterpolator(Interpolator.LINEAR);
+        rotateInBack.setAxis(Rotate.Y_AXIS);
+        rotateInBack.setFromAngle(-90);
+        rotateInBack.setToAngle(0);
+        //
+        return new SequentialTransition(rotateOutFront, rotateInBack);
+    }
+
+    public void move(int posX, int posY){
+        TranslateTransition translateTransitionFront = new TranslateTransition(Duration.millis(3000), front);
+        translateTransitionFront.setToX(posX); // à 350
+        translateTransitionFront.setToY(posY);
+        TranslateTransition translateTransitionBack = new TranslateTransition(Duration.millis(3000), back);
+        translateTransitionBack.setToX(posX); // à 350
+        translateTransitionBack.setToY(posY);
+
+        new ParallelTransition(translateTransitionFront, translateTransitionBack).play();
     }
 
     @Override
     public int compareTo(Card c){
-        return this.getP().getNumero()-c.getP().getNumero();
+        return this.getFront().getNumero()-c.getFront().getNumero();
     }
 
-    public Picture getP()
+    public Picture getFront()
     {
-        return this.p;
+        return this.front;
     }
 
     public void setX(int x) {
         this.x = x;
-        p.setX(x);
+        front.setX(x);
+        back.setX(x);
     }
 
     public int getY() {
@@ -69,15 +94,12 @@ public class Card extends Parent implements Comparable<Card>
 
     public void setY(int y) {
         this.y = y;
-        p.setY(y);
+        front.setY(y);
+        back.setY(y);
     }
 
     public void setInDog(boolean inDog) {
         this.inDog = inDog;
-    }
-
-    public static int getNbRemove() {
-        return nbRemove;
     }
 
 }

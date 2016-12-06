@@ -1,6 +1,8 @@
 package sample;
 
 
+import com.sun.javafx.sg.prism.NGShape;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.junit.*;
 import java.util.ArrayList;
 
@@ -8,6 +10,7 @@ import org.junit.Test;
 
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 
@@ -15,6 +18,17 @@ import static org.junit.Assert.assertFalse;
  * Created by oka on 25/11/16.
  */
 public class UnitTest {
+
+    Model m = new Model();
+    Picture p = new Picture();
+
+    @Before
+    public void setUp(){
+        for (int i = 0; i < 10; i++) {
+            Card c = new Card(p,0,0);
+            m.getCardsDeck().add(c);
+        }
+    }
 
     @Test
     public void addCardPlayer()
@@ -44,6 +58,7 @@ public class UnitTest {
         Picture img = new Picture();
         Card c = new Card(img,0,0);
         p1.addCardsToAPlayer(c);
+        assertEquals(p1.getCards().get(0), c);
         assertFalse(p1.getCards() == p2.getCards());
     }
     @Test
@@ -78,6 +93,12 @@ public class UnitTest {
 
 
     }
+
+    @Test
+    public void testBite(){
+        assertEquals(m.getCardsDeck().size(),10);
+    }
+
     @Test
     public void testDrawPlayerException()
     {

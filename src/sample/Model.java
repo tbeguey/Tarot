@@ -5,9 +5,14 @@ import java.util.Collections;
 
 public class Model extends java.util.Observable {
     private View view;
+
+    public ArrayList<Card> getCardsDeck() {
+        return cardsDeck;
+    }
+
     private ArrayList<Card> cardsDeck = new ArrayList<>();
     private ArrayList<Card> dog = new ArrayList();
-    private ArrayList<Card> bean = new ArrayList<>(); // servira comme "poubelle" pour les cartes dont le joueur faisant la prise ne veut pas
+    private ArrayList<Card> bin = new ArrayList<>(); // servira comme "poubelle" pour les cartes dont le joueur faisant la prise ne veut pas
     private ArrayList<Player> players = new ArrayList<>();
     private boolean littleDry = false;
     private boolean take = false;
@@ -25,20 +30,23 @@ public class Model extends java.util.Observable {
 
     public void initialiseCardsDeck(){
         for (int i = 0; i < view.getPictures().size(); i++) {
-            Card c = new Card(view.getPictures().get(i), view.getPositionCardX(),view.getPositionCardY());
+            Card c = new Card(view.getPictures().get(i), view.getPositionDeckX(),view.getPositionDeckY());
             cardsDeck.add(c);
         }
-        Collections.shuffle(cardsDeck);
+        Collections.shuffle(cardsDeck); // mélange
     }
 
 
 
     public void addCardHand(int idPlayer){
-        if (players.get(idPlayer).getCards().size() != 18){
+        if (players.get(idPlayer).getCards().size() != 18 && cardsDeck.size() !=0){
             Card c = cardsDeck.get(cardsDeck.size()-1);
             players.get(idPlayer).addCardsToAPlayer(c);
             if(idPlayer == 0){
-                view.updateAdd(c, true);
+                view.updateAddCurrentPlayer(c, true);
+            }
+            else{
+                view.updateAddOtherPlayer(c, idPlayer);
             }
             cardsDeck.remove(c);
         }
@@ -53,19 +61,19 @@ public class Model extends java.util.Observable {
         Card c = cardsDeck.get(cardsDeck.size()-1);
         c.setInDog(true);
         this.dog.add(c);
-        view.updateAdd(c, false);
+        view.updateAddCurrentPlayer(c, false);
         cardsDeck.remove(c);
     }
 
     public void dogToHand(){ // a tester
         for(int i=0;i<dog.size();i++){
-            dog.get(i).getP().changeImage();
+            //dog.get(i).flip().play();
             players.get(0).getCards().add(dog.get(i));
         }
         dog.clear();
     }
 
-    public void sortDeck(){
+    public void sortHand(){
         ArrayList<Card> handPique = new ArrayList();
         ArrayList<Card> handCoeur = new ArrayList();
         ArrayList<Card> handCarreau = new ArrayList();
@@ -73,20 +81,21 @@ public class Model extends java.util.Observable {
         ArrayList<Card> handAtout = new ArrayList();
         /* Reparti le deck du joueur dans 5 decks différents en fonction de leur couleur */
         for (int i = 0; i < players.get(0).getCards().size(); i++) {
-            if (players.get(0).getCards().get(i).getP().getColor() == TypeCard.Pique) {
+            if (players.get(0).getCards().get(i).getFront().getColor() == TypeCard.Pique) {
                 handPique.add(players.get(0).getCards().get(i));
-            } else if (players.get(0).getCards().get(i).getP().getColor() == TypeCard.Coeur) {
+            } else if (players.get(0).getCards().get(i).getFront().getColor() == TypeCard.Coeur) {
                 handCoeur.add(players.get(0).getCards().get(i));
-            } else if (players.get(0).getCards().get(i).getP().getColor() == TypeCard.Atout) {
+            } else if (players.get(0).getCards().get(i).getFront().getColor() == TypeCard.Atout) {
                 handAtout.add(players.get(0).getCards().get(i));
-            } else if (players.get(0).getCards().get(i).getP().getColor() == TypeCard.Carreau) {
+            } else if (players.get(0).getCards().get(i).getFront().getColor() == TypeCard.Carreau) {
                 handCarreau.add(players.get(0).getCards().get(i));
-            } else if (players.get(0).getCards().get(i).getP().getColor() == TypeCard.Trefle) {
+            } else if (players.get(0).getCards().get(i).getFront().getColor() == TypeCard.Trefle) {
                 handTrefle.add(players.get(0).getCards().get(i));
             }
         }
         /* Vide le deck du joueur */
-        players.get(0).getCards().removeAll(players.get(0).getCards()); // utiliser clear?
+        players.get(0).getCards().clear();
+        //players.get(0).getCards().removeAll(players.get(0).getCards()); // utiliser clear?
 
         /* Trie les cartes selon leur nombre */
         Collections.sort(handPique);
@@ -97,78 +106,61 @@ public class Model extends java.util.Observable {
 
         for (int i = 0; i < handPique.size(); i++) {
             players.get(0).getCards().add(handPique.get(i));
-            handPique.get(i).getP().setX(view.getPositionCardX());
-            handPique.get(i).getP().setY(view.getPositionCardY());
-            view.setPositionCardX(view.getPositionCardX()+150);
-            if (players.get(0).getCards().size() == 9) {
-                view.setPositionCardX(150);
-                view.setPositionCardY(250);
-            }
+            view.updateAddCurrentPlayer(handPique.get(i), true);
         }
 
         for (int i = 0; i < handCoeur.size(); i++) {
             players.get(0).getCards().add(handCoeur.get(i));
-            handCoeur.get(i).getP().setX(view.getPositionCardX());
-            handCoeur.get(i).getP().setY(view.getPositionCardY());
-            view.setPositionCardX(view.getPositionCardX()+150);
-            if (players.get(0).getCards().size() == 9) {
-                view.setPositionCardX(150);
-                view.setPositionCardY(250);
-            }
+            view.updateAddCurrentPlayer(handCoeur.get(i), true);
         }
 
         for (int i = 0; i < handAtout.size(); i++) {
             players.get(0).getCards().add(handAtout.get(i));
-            handAtout.get(i).getP().setX(view.getPositionCardX());
-            handAtout.get(i).getP().setY(view.getPositionCardY());
-            view.setPositionCardX(view.getPositionCardX()+150);
-            if (players.get(0).getCards().size() == 9) {
-                view.setPositionCardX(150);
-                view.setPositionCardY(250);
-            }
+            view.updateAddCurrentPlayer(handAtout.get(i), true);
         }
 
         for (int i = 0; i < handCarreau.size(); i++) {
             players.get(0).getCards().add(handCarreau.get(i));
-            handCarreau.get(i).getP().setX(view.getPositionCardX());
-            handCarreau.get(i).getP().setY(view.getPositionCardY());
-            view.setPositionCardX(view.getPositionCardX()+150);
-            if (players.get(0).getCards().size() == 9) {
-                view.setPositionCardX(150);
-                view.setPositionCardY(250);
-            }
+            view.updateAddCurrentPlayer(handCarreau.get(i), true);
         }
 
         for (int i = 0; i < handTrefle.size(); i++) {
             players.get(0).getCards().add(handTrefle.get(i));
-            handTrefle.get(i).getP().setX(view.getPositionCardX());
-            handTrefle.get(i).getP().setY(view.getPositionCardY());
-            view.setPositionCardX(view.getPositionCardX()+150);
-            if (players.get(0).getCards().size() == 9) {
-                view.setPositionCardX(150);
-                view.setPositionCardY(250);
-            }
+            view.updateAddCurrentPlayer(handTrefle.get(i), true);
         }
 
         /* Vide les 5 decks de couleurs */
-        handPique.removeAll(handPique);
+        /*handPique.removeAll(handPique);
         handCoeur.removeAll(handCoeur);
         handAtout.removeAll(handAtout);
         handCarreau.removeAll(handCarreau);
-        handTrefle.removeAll(handTrefle);
+        handTrefle.removeAll(handTrefle);*/
+        handPique.clear();
+        handCarreau.clear();
+        handAtout.clear();
+        handTrefle.clear();
+        handCoeur.clear();
+    }
+
+    public void sortDog(){
+        ArrayList<Card> handPique = new ArrayList();
+        ArrayList<Card> handCoeur = new ArrayList();
+        ArrayList<Card> handCarreau = new ArrayList();
+        ArrayList<Card> handTrefle = new ArrayList();
+        ArrayList<Card> handAtout = new ArrayList();
 
         /* On effectue la meme procédure avec le Chien */
 
         for (int i = 0; i < this.getDog().size(); i++) {
-            if (this.getDog().get(i).getP().getColor() == TypeCard.Pique) {
+            if (this.getDog().get(i).getFront().getColor() == TypeCard.Pique) {
                 handPique.add(this.getDog().get(i));
-            } else if (this.getDog().get(i).getP().getColor() == TypeCard.Coeur) {
+            } else if (this.getDog().get(i).getFront().getColor() == TypeCard.Coeur) {
                 handCoeur.add(this.getDog().get(i));
-            } else if (this.getDog().get(i).getP().getColor() == TypeCard.Atout) {
+            } else if (this.getDog().get(i).getFront().getColor() == TypeCard.Atout) {
                 handAtout.add(this.getDog().get(i));
-            } else if (this.getDog().get(i).getP().getColor() == TypeCard.Carreau) {
+            } else if (this.getDog().get(i).getFront().getColor() == TypeCard.Carreau) {
                 handCarreau.add(this.getDog().get(i));
-            } else if (this.getDog().get(i).getP().getColor() == TypeCard.Trefle) {
+            } else if (this.getDog().get(i).getFront().getColor() == TypeCard.Trefle) {
                 handTrefle.add(this.getDog().get(i));
             }
         }
@@ -183,33 +175,23 @@ public class Model extends java.util.Observable {
 
         for (int i = 0; i < handPique.size(); i++){
             this.getDog().add(handPique.get(i));
-            handPique.get(i).getP().setX(view.getPositionDogX());
-            handPique.get(i).getP().setY(view.getPositionDogY());
-            view.setPositionDogX(view.getPositionDogX()+150);
+            view.updateAddCurrentPlayer(handPique.get(i), false);
         }
         for (int i = 0; i < handCoeur.size(); i++){
             this.getDog().add(handCoeur.get(i));
-            handCoeur.get(i).getP().setX(view.getPositionDogX());
-            handCoeur.get(i).getP().setY(view.getPositionDogY());
-            view.setPositionDogX(view.getPositionDogX()+150);
+            view.updateAddCurrentPlayer(handCoeur.get(i), false);
         }
         for (int i = 0; i < handAtout.size(); i++){
             this.getDog().add(handAtout.get(i));
-            handAtout.get(i).getP().setX(view.getPositionDogX());
-            handAtout.get(i).getP().setY(view.getPositionDogY());
-            view.setPositionDogX(view.getPositionDogX()+150);
+            view.updateAddCurrentPlayer(handAtout.get(i), false);
         }
         for (int i = 0; i < handCarreau.size(); i++){
             this.getDog().add(handCarreau.get(i));
-            handCarreau.get(i).getP().setX(view.getPositionDogX());
-            handCarreau.get(i).getP().setY(view.getPositionDogY());
-            view.setPositionDogX(view.getPositionDogX()+150);
+            view.updateAddCurrentPlayer(handCarreau.get(i), false);
         }
         for (int i = 0; i < handTrefle.size(); i++){
             this.getDog().add(handTrefle.get(i));
-            handTrefle.get(i).getP().setX(view.getPositionDogX());
-            handTrefle.get(i).getP().setY(view.getPositionDogY());
-            view.setPositionDogX(view.getPositionDogX()+150);
+            view.updateAddCurrentPlayer(handTrefle.get(i), false);
         }
 
         handPique.removeAll(handPique);
@@ -224,7 +206,7 @@ public class Model extends java.util.Observable {
             for(int i=0;i<players.size();i++){
                 int cpt_atout = 0;
                 for(int j=0;j<players.get(i).getCards().size();j++){
-                    if(players.get(i).getCards().get(j).getP().getColor() == TypeCard.Atout){
+                    if(players.get(i).getCards().get(j).getFront().getColor() == TypeCard.Atout){
                         cpt_atout++;
                     }
                 }
@@ -243,6 +225,10 @@ public class Model extends java.util.Observable {
 
     public ArrayList<Card> getDog() {
         return this.dog;
+    }
+
+    public ArrayList<Card> getBin() {
+        return bin;
     }
 
     public void setView(View v){

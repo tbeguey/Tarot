@@ -18,6 +18,7 @@ public class Main
         model.setView(this.view);
         this.controller = new Controller(this.model, this.view);
         model.initialiseCardsDeck();
+        view.updateDeck();
     }
 
     public static void main(String[] args)

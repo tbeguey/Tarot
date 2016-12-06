@@ -1,9 +1,7 @@
 package sample;
 
-import com.sun.java.swing.plaf.motif.resources.motif_de;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 
 public class Controller
 {
@@ -38,7 +36,7 @@ public class Controller
             public void handle(ActionEvent event) {
                 if (model.getPlayers().get(0).getCards().size() + model.getDog().size() == 24){
                     for (int i = 0; i < model.getPlayers().get(0).getCards().size(); i++) {
-                        model.getPlayers().get(0).getCards().get(i).getP().changeImage();
+                        model.getPlayers().get(0).getCards().get(i).flip().play();
                     }
                 }
             }
@@ -47,12 +45,13 @@ public class Controller
         view.getSort().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                view.setCardPlaced(0);
                 if (model.getPlayers().get(0).getCards().size() + model.getDog().size() == 24) {
                     view.setPositionCardX(150);
                     view.setPositionCardY(50);
                     view.setPositionDogX(350);
                     view.setPositionDogY(700);
-                    model.sortDeck();
+                    model.sortHand();
                     model.testLittleDry(); // on test le petit sec une fois que toutes les cartes sont distribuées et triées
                 }
             }
@@ -61,10 +60,26 @@ public class Controller
         view.getTake().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                    model.dogToHand();
-                for (int i = 0; i < model.getPlayers().get(0).getCards().size(); i++) {
-                    model.getPlayers().get(0).getCards().get(i).changeActionToRemove();
-                }
+                view.setCardPlaced(0);
+                model.dogToHand();
+                view.setPositionCardX(150);
+                view.setPositionCardY(50);
+                view.setPositionDogX(350);
+                view.setPositionDogY(700);
+                model.sortHand();
+                view.a();
+            }
+        });
+
+        view.getNext().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                view.setCardPlaced(0);
+                view.setPositionCardX(150);
+                view.setPositionCardY(50);
+                view.setPositionDogX(350);
+                view.setPositionDogY(700);
+                model.sortHand();
             }
         });
     }
