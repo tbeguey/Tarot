@@ -23,6 +23,7 @@ public class View implements Observer{
     private Button returnedAll = new Button();
     private Button sort = new Button();
     private Button take = new Button();
+    private Button gard = new Button();
     private Button next = new Button();
     private int positionDeckX = 750;
     private int positionDeckY = 400;
@@ -67,12 +68,16 @@ public class View implements Observer{
         this.next.setText("Test");
         this.next.setLayoutX(1000.0D);
         this.next.setLayoutY(10.0D);
+        this.gard.setText("Garde");
+        this.gard.setLayoutX(1200.0D);
+        this.gard.setLayoutY(10.0D);
 
         this.root.getChildren().add(this.distribution);
         this.root.getChildren().add(this.returnedAll);
         this.root.getChildren().add(this.sort);
         this.root.getChildren().add(this.take);
         this.root.getChildren().add(this.next);
+        this.root.getChildren().add(this.gard);
 
         this.window.setScene(this.scene);
         this.window.show();
@@ -82,9 +87,6 @@ public class View implements Observer{
         if(Hand){
             c.move(positionCardX-positionDeckX,positionCardY-positionDeckY);
             cardPlaced++;
-            System.out.println(cardPlaced);
-            //c.setX(positionCardX);
-            //c.setY(positionCardY);
             this.positionCardX += 150;
             if (cardPlaced == 9) {
                 this.positionCardY = 250;
@@ -94,14 +96,9 @@ public class View implements Observer{
                 this.positionCardY = 450;
                 this.positionCardX = 150;
             }
-            else if (cardPlaced > 24){
-                System.out.println("bug bug bug");
-            }
         }
         else{
             c.move(positionDogX-positionDeckX,positionDogY-positionDeckY);
-            //c.setX(positionDogX);
-            //c.setY(positionDogY);
             this.positionDogX +=150;
         }
     }
@@ -120,15 +117,25 @@ public class View implements Observer{
         //c.setY(-50);
     }
 
-    public void a(){
+    public void removeCard(){
         for(int i=0;i<model.getPlayers().get(0).getCards().size();i++) {
             int finalI = i;
             model.getPlayers().get(0).getCards().get(i).setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
-                    model.getPlayers().get(0).removeCardsToAPlayer(model.getPlayers().get(0).getCards().get(finalI));
-                    model.getPlayers().get(0).getCards().remove(model.getPlayers().get(0).getCards().get(finalI));
-                    root.getChildren().remove(model.getPlayers().get(0).getCards().get(finalI));
+                    if(model.getGap().size() !=6){
+                        model.getPlayers().get(0).removeCardsToAPlayer(model.getPlayers().get(0).getCards().get(finalI));
+                        model.getGap().add(model.getPlayers().get(0).getCards().get(finalI));
+                        model.getPlayers().get(0).getCards().remove(model.getPlayers().get(0).getCards().get(finalI));
+                        root.getChildren().remove(model.getPlayers().get(0).getCards().get(finalI));
+                    }
+                    else{
+                        positionCardX = 150;
+                        positionCardY = 50;
+                        positionDogX = 350;
+                        positionDogY = 700;
+                        model.sortHand();
+                    }
                 }
             });
         }
@@ -205,6 +212,8 @@ public class View implements Observer{
     public Button getTake() {
         return take;
     }
+
+    public Button getGard() { return gard; }
 
     public Button getNext() { return next; }
 }

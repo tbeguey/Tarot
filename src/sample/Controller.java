@@ -16,29 +16,14 @@ public class Controller
         view.getDistribution().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent event) {
-                if (model.getPlayers().get(0).getCards().size() == 15 && model.getDog().size() != 6){
-                    model.addCardDog();
-                }
-                for (int i = 1; i <= 4; i++){
-                    for (int j = 1; j <= 3; j++) {
-                        model.addCardHand(i-1);
-                    }
-
-                }
-                if (model.getPlayers().get(0).getCards().size() != 18 && model.getDog().size() != 6) {
-                    model.addCardDog();
-                }
+                model.distribution();
             }
         });
 
         view.getReturnedAll().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (model.getPlayers().get(0).getCards().size() + model.getDog().size() == 24){
-                    for (int i = 0; i < model.getPlayers().get(0).getCards().size(); i++) {
-                        model.getPlayers().get(0).getCards().get(i).flip().play();
-                    }
-                }
+                model.returnedAllCard();
             }
         });
 
@@ -67,7 +52,16 @@ public class Controller
                 view.setPositionDogX(350);
                 view.setPositionDogY(700);
                 model.sortHand();
-                view.a();
+                view.removeCard();
+            }
+        });
+
+        view.getGard().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                for (int i = 0; i < model.getDog().size(); i++) {
+                    model.getDog().get(i).moveGard();
+                }
             }
         });
 

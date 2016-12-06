@@ -12,7 +12,7 @@ public class Model extends java.util.Observable {
 
     private ArrayList<Card> cardsDeck = new ArrayList<>();
     private ArrayList<Card> dog = new ArrayList();
-    private ArrayList<Card> bin = new ArrayList<>(); // servira comme "poubelle" pour les cartes dont le joueur faisant la prise ne veut pas
+    private ArrayList<Card> gap = new ArrayList<>(); // servira comme "poubelle" pour les cartes dont le joueur faisant la prise ne veut pas
     private ArrayList<Player> players = new ArrayList<>();
     private boolean littleDry = false;
     private boolean take = false;
@@ -49,6 +49,29 @@ public class Model extends java.util.Observable {
                 view.updateAddOtherPlayer(c, idPlayer);
             }
             cardsDeck.remove(c);
+        }
+    }
+
+    public void distribution(){
+        if (players.get(0).getCards().size() == 15 && dog.size() != 6){
+            addCardDog();
+        }
+        for (int i = 1; i <= 4; i++){
+            for (int j = 1; j <= 3; j++) {
+                addCardHand(i-1);
+            }
+
+        }
+        if (players.get(0).getCards().size() != 18 && players.size() != 6) {
+            addCardDog();
+        }
+    }
+
+    public void returnedAllCard(){
+        if (players.get(0).getCards().size() + dog.size() == 24){
+            for (int i = 0; i < players.get(0).getCards().size(); i++) {
+                players.get(0).getCards().get(i).flip().play();
+            }
         }
     }
 
@@ -227,8 +250,8 @@ public class Model extends java.util.Observable {
         return this.dog;
     }
 
-    public ArrayList<Card> getBin() {
-        return bin;
+    public ArrayList<Card> getGap() {
+        return gap;
     }
 
     public void setView(View v){

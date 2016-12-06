@@ -1,13 +1,14 @@
 package sample;
 
 import javafx.animation.*;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
-public class Card extends Parent implements Comparable<Card>
+public class Card extends Group implements Comparable<Card>
 {
     private Picture front;
     private ImageView back = new ImageView();
@@ -70,6 +71,24 @@ public class Card extends Parent implements Comparable<Card>
         translateTransitionBack.setToY(posY);
 
         new ParallelTransition(translateTransitionFront, translateTransitionBack).play();
+    }
+
+    public void moveGard(){
+        TranslateTransition translateTransitionFrontX = new TranslateTransition(Duration.millis(1000), front);
+        translateTransitionFrontX.setToX(500);
+        TranslateTransition translateTransitionBackX = new TranslateTransition(Duration.millis(1000), back);
+        translateTransitionBackX.setToX(500);
+
+        ParallelTransition parallelTransitionX = new ParallelTransition(translateTransitionFrontX, translateTransitionBackX);
+
+        TranslateTransition translateTransitionFrontY = new TranslateTransition(Duration.millis(500), front);
+        translateTransitionFrontY.setToY(500);
+        TranslateTransition translateTransitionBackY = new TranslateTransition(Duration.millis(500), back);
+        translateTransitionBackY.setToY(500);
+
+        ParallelTransition parallelTransitionY = new ParallelTransition(translateTransitionFrontY, translateTransitionBackY);
+
+        new SequentialTransition(parallelTransitionX, parallelTransitionY).play();
     }
 
     @Override
