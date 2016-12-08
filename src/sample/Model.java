@@ -80,14 +80,6 @@ public class Model extends java.util.Observable {
         }
     }
 
-    /*public void returnedAllCard(){
-        if (players.get(0).getCards().size() + dog.size() == 24){
-            for (int i = 0; i < players.get(0).getCards().size(); i++) {
-                players.get(0).getCards().get(i).flip().play();
-            }
-        }
-    }*/
-
     public void addCardDog() {
         CardModel c = cardsDeck.get(cardsDeck.size()-1);
         c.setInDog(true);
@@ -100,7 +92,6 @@ public class Model extends java.util.Observable {
 
     public void dogToHand(){ // a tester
         for(int i=0;i<dog.size();i++){
-            //dog.get(i).flip().play();
             players.get(0).getCards().add(dog.get(i));
         }
         dog.clear();

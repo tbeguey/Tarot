@@ -14,7 +14,7 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Card extends Parent
+public class Card extends Group
 {
     private CardModel cardModel;
     private ImageView front;
@@ -23,6 +23,8 @@ public class Card extends Parent
     private int y;
     private static Image image_cached = new Image("file:./ressources-100/cache.jpg");
     private static long halfFlipDuration = 1000;
+    private static long MoveDuration = 3000;
+    private static long GardMoveDuration = 6000;
 
     public Card(ImageView front, CardModel cardModel, int x, int y)
     {
@@ -40,45 +42,40 @@ public class Card extends Parent
         this.front.setFitWidth(80);
         this.front.setFitHeight(170);
 
-        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("AH KLIK");
-                if(!cardModel.isInDog())
-                    flip().play();
-            }
-        });
     }
     Collection<Node> getNodes(){
         ArrayList<Node> al = new ArrayList<>();
         al.add(front);
-        //al.add(back);
+        al.add(back);
         return al;
     }
 
-    Transition flip() {
+    public void flip() {
         System.out.print("Whaou tu m'as fait fliper !");
         final RotateTransition rotateOutFront = new RotateTransition(Duration.millis(halfFlipDuration), front);
         rotateOutFront.setInterpolator(Interpolator.LINEAR);
         rotateOutFront.setAxis(Rotate.Y_AXIS);
-        rotateOutFront.setFromAngle(0);
-        rotateOutFront.setToAngle(90);
+        rotateOutFront.setFromAngle(90);
+        rotateOutFront.setToAngle(0);
         //
         final RotateTransition rotateInBack = new RotateTransition(Duration.millis(halfFlipDuration), back);
         rotateInBack.setInterpolator(Interpolator.LINEAR);
         rotateInBack.setAxis(Rotate.Y_AXIS);
-        rotateInBack.setFromAngle(-90);
-        rotateInBack.setToAngle(0);
+        rotateInBack.setFromAngle(0);
+        rotateInBack.setToAngle(90);
+
+        rotateInBack.setOnFinished(event -> {front.setOpacity(1); back.setOpacity(0);});
         //
-        return new SequentialTransition(rotateOutFront, rotateInBack);
+
+        new SequentialTransition(rotateOutFront, rotateInBack).play();
     }
 
     public void move(int posX, int posY){
-        TranslateTransition translateTransitionFront = new TranslateTransition(Duration.millis(3000), front);
+        TranslateTransition translateTransitionFront = new TranslateTransition(Duration.millis(MoveDuration), front);
         translateTransitionFront.setToX(posX); // à 350
         translateTransitionFront.setToY(posY);
 
-        TranslateTransition translateTransitionBack = new TranslateTransition(Duration.millis(3000), back);
+        TranslateTransition translateTransitionBack = new TranslateTransition(Duration.millis(MoveDuration), back);
         translateTransitionBack.setToX(posX); // à 350
         translateTransitionBack.setToY(posY);
 
@@ -86,9 +83,9 @@ public class Card extends Parent
     }
 
     public void moveGard(){
-        TranslateTransition translateTransitionFrontX = new TranslateTransition(Duration.millis(1000), front);
+        TranslateTransition translateTransitionFrontX = new TranslateTransition(Duration.millis(GardMoveDuration), front);
         translateTransitionFrontX.setToX(500);
-        TranslateTransition translateTransitionBackX = new TranslateTransition(Duration.millis(1000), back);
+        TranslateTransition translateTransitionBackX = new TranslateTransition(Duration.millis(GardMoveDuration), back);
         translateTransitionBackX.setToX(500);
 
         ParallelTransition parallelTransitionX = new ParallelTransition(translateTransitionFrontX, translateTransitionBackX);
@@ -103,17 +100,8 @@ public class Card extends Parent
         new SequentialTransition(parallelTransitionX, parallelTransitionY).play();
     }
 
-    /*public Picture getFront()
-    {
-        return this.front;
-    }*/
 
     public CardModel getCardModel() {
         return cardModel;
     }
-
-    public void setCardModel(CardModel cardModel) {
-        this.cardModel = cardModel;
-    }
-
 }
