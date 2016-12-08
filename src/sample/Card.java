@@ -1,28 +1,33 @@
 package sample;
 
 import javafx.animation.*;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
-public class Card extends Group implements Comparable<Card>
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class Card extends Parent
 {
-    private Picture front;
+    private CardModel cardModel;
+    private ImageView front;
     private ImageView back = new ImageView();
     private int x;
     private int y;
-    private boolean inDog;
     private static Image image_cached = new Image("file:./ressources-100/cache.jpg");
     private static long halfFlipDuration = 1000;
 
-
-    public Card(Picture p, int x, int y)
+    public Card(ImageView front, CardModel cardModel, int x, int y)
     {
-        inDog = false;
-        this.front = p;
+        this.cardModel = cardModel;
+        this.front = front;
         this.x = x;
         this.y = y;
         this.front.setX(x);
@@ -34,19 +39,25 @@ public class Card extends Group implements Comparable<Card>
         this.back.setFitHeight(170);
         this.front.setFitWidth(80);
         this.front.setFitHeight(170);
-        this.getChildren().add(this.front);
-        //this.getChildren().add(this.back);
 
-        this.setOnMouseClicked(new javafx.event.EventHandler<javafx.scene.input.MouseEvent>() {
+        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(javafx.scene.input.MouseEvent event) {
-                if(!inDog)
+            public void handle(MouseEvent event) {
+                System.out.println("AH KLIK");
+                if(!cardModel.isInDog())
                     flip().play();
             }
         });
     }
+    Collection<Node> getNodes(){
+        ArrayList<Node> al = new ArrayList<>();
+        al.add(front);
+        //al.add(back);
+        return al;
+    }
 
     Transition flip() {
+        System.out.print("Whaou tu m'as fait fliper !");
         final RotateTransition rotateOutFront = new RotateTransition(Duration.millis(halfFlipDuration), front);
         rotateOutFront.setInterpolator(Interpolator.LINEAR);
         rotateOutFront.setAxis(Rotate.Y_AXIS);
@@ -66,6 +77,7 @@ public class Card extends Group implements Comparable<Card>
         TranslateTransition translateTransitionFront = new TranslateTransition(Duration.millis(3000), front);
         translateTransitionFront.setToX(posX); // à 350
         translateTransitionFront.setToY(posY);
+
         TranslateTransition translateTransitionBack = new TranslateTransition(Duration.millis(3000), back);
         translateTransitionBack.setToX(posX); // à 350
         translateTransitionBack.setToY(posY);
@@ -91,34 +103,17 @@ public class Card extends Group implements Comparable<Card>
         new SequentialTransition(parallelTransitionX, parallelTransitionY).play();
     }
 
-    @Override
-    public int compareTo(Card c){
-        return this.getFront().getNumero()-c.getFront().getNumero();
-    }
-
-    public Picture getFront()
+    /*public Picture getFront()
     {
         return this.front;
+    }*/
+
+    public CardModel getCardModel() {
+        return cardModel;
     }
 
-    public void setX(int x) {
-        this.x = x;
-        front.setX(x);
-        back.setX(x);
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-        front.setY(y);
-        back.setY(y);
-    }
-
-    public void setInDog(boolean inDog) {
-        this.inDog = inDog;
+    public void setCardModel(CardModel cardModel) {
+        this.cardModel = cardModel;
     }
 
 }

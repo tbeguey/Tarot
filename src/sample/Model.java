@@ -4,18 +4,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class Model extends java.util.Observable {
-    private View view;
-
-    public ArrayList<Card> getCardsDeck() {
-        return cardsDeck;
-    }
-
-    private ArrayList<Card> cardsDeck = new ArrayList<>();
-    private ArrayList<Card> dog = new ArrayList();
-    private ArrayList<Card> gap = new ArrayList<>(); // servira comme "poubelle" pour les cartes dont le joueur faisant la prise ne veut pas
+    //private View view;
+    private int idPlayerDistrib;
+    private Notification notif;
+    private ArrayList<CardModel> cardsDeck = new ArrayList<>();
+    private ArrayList<CardModel> dog = new ArrayList();
+    private ArrayList<CardModel> gap = new ArrayList<>();
     private ArrayList<Player> players = new ArrayList<>();
     private boolean littleDry = false;
-    private boolean take = false;
+
 
     public Model() {
         Player p1 = new Player();
@@ -26,27 +23,42 @@ public class Model extends java.util.Observable {
         players.add(p2);
         players.add(p3);
         players.add(p4);
+        idPlayerDistrib = 0;
+        initialiseCardsDeck();
     }
 
     public void initialiseCardsDeck(){
-        for (int i = 0; i < view.getPictures().size(); i++) {
-            Card c = new Card(view.getPictures().get(i), view.getPositionDeckX(),view.getPositionDeckY());
-            cardsDeck.add(c);
-        }
+         for (int i = 1; i <= 21; i++){
+                cardsDeck.add(new CardModel(i,TypeCard.Trump));
+            }
+            for (int i = 1; i <= 14; i++){
+                cardsDeck.add(new CardModel(i,TypeCard.Diamond));
+                cardsDeck.add(new CardModel(i,TypeCard.Heart));
+                cardsDeck.add(new CardModel(i,TypeCard.Club));
+                cardsDeck.add(new CardModel(i,TypeCard.Spade));
+            }
+            cardsDeck.add(new CardModel(0,TypeCard.Excuse)); // L'excuse
         Collections.shuffle(cardsDeck); // mélange
     }
 
 
-
-    public void addCardHand(int idPlayer){
-        if (players.get(idPlayer).getCards().size() != 18 && cardsDeck.size() !=0){
-            Card c = cardsDeck.get(cardsDeck.size()-1);
-            players.get(idPlayer).addCardsToAPlayer(c);
-            if(idPlayer == 0){
-                view.updateAddCurrentPlayer(c, true);
+    public void addCardHand(){
+        if (players.get(idPlayerDistrib).getCards().size() != 18 && cardsDeck.size() !=0){
+            CardModel c = cardsDeck.get(cardsDeck.size()-1);
+            players.get(idPlayerDistrib).addCardsToAPlayer(c);
+            if(idPlayerDistrib == 0){
+                notif = Notification.AddCardCurrentPlayer;
+                System.out.print(" 1 :" + c.getNumero());
+                System.out.println(c.getColor());
+                setChanged();
+                notifyObservers(c);
             }
             else{
-                view.updateAddOtherPlayer(c, idPlayer);
+                notif = Notification.AddOtherPlayer;
+                System.out.print(" 1 :" + c.getNumero());
+                System.out.println(c.getColor());
+                setChanged();
+                notifyObservers(c);
             }
             cardsDeck.remove(c);
         }
@@ -58,33 +70,31 @@ public class Model extends java.util.Observable {
         }
         for (int i = 1; i <= 4; i++){
             for (int j = 1; j <= 3; j++) {
-                addCardHand(i-1);
+                addCardHand();
             }
-
+            idPlayerDistrib++;
+            idPlayerDistrib = idPlayerDistrib%4;
         }
         if (players.get(0).getCards().size() != 18 && players.size() != 6) {
             addCardDog();
         }
     }
 
-    public void returnedAllCard(){
+    /*public void returnedAllCard(){
         if (players.get(0).getCards().size() + dog.size() == 24){
             for (int i = 0; i < players.get(0).getCards().size(); i++) {
                 players.get(0).getCards().get(i).flip().play();
             }
         }
-    }
-
-    public void removeCardHand(int idPlayer, Card c){ // a tester
-        players.get(idPlayer).removeCardsToAPlayer(c);
-        view.updateRemove(c);
-    }
+    }*/
 
     public void addCardDog() {
-        Card c = cardsDeck.get(cardsDeck.size()-1);
+        CardModel c = cardsDeck.get(cardsDeck.size()-1);
         c.setInDog(true);
         this.dog.add(c);
-        view.updateAddCurrentPlayer(c, false);
+        notif = Notification.AddDog;
+        setChanged();
+        notifyObservers(c);
         cardsDeck.remove(c);
     }
 
@@ -97,23 +107,26 @@ public class Model extends java.util.Observable {
     }
 
     public void sortHand(){
-        ArrayList<Card> handPique = new ArrayList();
-        ArrayList<Card> handCoeur = new ArrayList();
-        ArrayList<Card> handCarreau = new ArrayList();
-        ArrayList<Card> handTrefle = new ArrayList();
-        ArrayList<Card> handAtout = new ArrayList();
+        ArrayList<CardModel> handSpade = new ArrayList();
+        ArrayList<CardModel> handHeart = new ArrayList();
+        ArrayList<CardModel> handDiamond = new ArrayList();
+        ArrayList<CardModel> handClubs = new ArrayList();
+        ArrayList<CardModel> handTrumps = new ArrayList();
+        CardModel excuse = null;
         /* Reparti le deck du joueur dans 5 decks différents en fonction de leur couleur */
         for (int i = 0; i < players.get(0).getCards().size(); i++) {
-            if (players.get(0).getCards().get(i).getFront().getColor() == TypeCard.Pique) {
-                handPique.add(players.get(0).getCards().get(i));
-            } else if (players.get(0).getCards().get(i).getFront().getColor() == TypeCard.Coeur) {
-                handCoeur.add(players.get(0).getCards().get(i));
-            } else if (players.get(0).getCards().get(i).getFront().getColor() == TypeCard.Atout) {
-                handAtout.add(players.get(0).getCards().get(i));
-            } else if (players.get(0).getCards().get(i).getFront().getColor() == TypeCard.Carreau) {
-                handCarreau.add(players.get(0).getCards().get(i));
-            } else if (players.get(0).getCards().get(i).getFront().getColor() == TypeCard.Trefle) {
-                handTrefle.add(players.get(0).getCards().get(i));
+            if (players.get(0).getCards().get(i).getColor() == TypeCard.Spade) {
+                handSpade.add(players.get(0).getCards().get(i));
+            } else if (players.get(0).getCards().get(i).getColor() == TypeCard.Heart) {
+                handHeart.add(players.get(0).getCards().get(i));
+            } else if (players.get(0).getCards().get(i).getColor() == TypeCard.Trump) {
+                handTrumps.add(players.get(0).getCards().get(i));
+            } else if (players.get(0).getCards().get(i).getColor() == TypeCard.Diamond) {
+                handDiamond.add(players.get(0).getCards().get(i));
+            } else if (players.get(0).getCards().get(i).getColor() == TypeCard.Club) {
+                handClubs.add(players.get(0).getCards().get(i));
+            } else if (players.get(0).getCards().get(i).getColor() == TypeCard.Excuse) {
+                excuse = players.get(0).getCards().get(i);
             }
         }
         /* Vide le deck du joueur */
@@ -121,58 +134,75 @@ public class Model extends java.util.Observable {
         //players.get(0).getCards().removeAll(players.get(0).getCards()); // utiliser clear?
 
         /* Trie les cartes selon leur nombre */
-        Collections.sort(handPique);
-        Collections.sort(handCoeur);
-        Collections.sort(handAtout);
-        Collections.sort(handCarreau);
-        Collections.sort(handTrefle);
+        Collections.sort(handSpade);
+        Collections.sort(handHeart);
+        Collections.sort(handTrumps);
+        Collections.sort(handDiamond);
+        Collections.sort(handClubs);
 
-        for (int i = 0; i < handPique.size(); i++) {
-            players.get(0).getCards().add(handPique.get(i));
-            view.updateAddCurrentPlayer(handPique.get(i), true);
+        for (int i = 0; i < handSpade.size(); i++) {
+            players.get(0).getCards().add(handSpade.get(i));
+            notif = Notification.AddCardCurrentPlayer;
+            setChanged();
+            notifyObservers(handSpade.get(i));
         }
 
-        for (int i = 0; i < handCoeur.size(); i++) {
-            players.get(0).getCards().add(handCoeur.get(i));
-            view.updateAddCurrentPlayer(handCoeur.get(i), true);
+        for (int i = 0; i < handHeart.size(); i++) {
+            players.get(0).getCards().add(handHeart.get(i));
+            notif = Notification.AddCardCurrentPlayer;
+            setChanged();
+            notifyObservers(handHeart.get(i));
         }
 
-        for (int i = 0; i < handAtout.size(); i++) {
-            players.get(0).getCards().add(handAtout.get(i));
-            view.updateAddCurrentPlayer(handAtout.get(i), true);
+        for (int i = 0; i < handTrumps.size(); i++) {
+            players.get(0).getCards().add(handTrumps.get(i));
+            notif = Notification.AddCardCurrentPlayer;
+            setChanged();
+            notifyObservers(handTrumps.get(i));
         }
 
-        for (int i = 0; i < handCarreau.size(); i++) {
-            players.get(0).getCards().add(handCarreau.get(i));
-            view.updateAddCurrentPlayer(handCarreau.get(i), true);
+        if(excuse != null){
+            players.get(0).getCards().add(excuse);
+            notif = Notification.AddCardCurrentPlayer;
+            setChanged();
+            notifyObservers(excuse);
         }
 
-        for (int i = 0; i < handTrefle.size(); i++) {
-            players.get(0).getCards().add(handTrefle.get(i));
-            view.updateAddCurrentPlayer(handTrefle.get(i), true);
+        for (int i = 0; i < handDiamond.size(); i++) {
+            players.get(0).getCards().add(handDiamond.get(i));
+            notif = Notification.AddCardCurrentPlayer;
+            setChanged();
+            notifyObservers(handDiamond.get(i));
+        }
+
+        for (int i = 0; i < handClubs.size(); i++) {
+            players.get(0).getCards().add(handClubs.get(i));
+            notif = Notification.AddCardCurrentPlayer;
+            setChanged();
+            notifyObservers(handClubs.get(i));
         }
 
         /* Vide les 5 decks de couleurs */
-        /*handPique.removeAll(handPique);
-        handCoeur.removeAll(handCoeur);
-        handAtout.removeAll(handAtout);
-        handCarreau.removeAll(handCarreau);
-        handTrefle.removeAll(handTrefle);*/
-        handPique.clear();
-        handCarreau.clear();
-        handAtout.clear();
-        handTrefle.clear();
-        handCoeur.clear();
+        /*handSpade.removeAll(handSpade);
+        handHeart.removeAll(handHeart);
+        handTrumps.removeAll(handTrumps);
+        handDiamond.removeAll(handDiamond);
+        handClubs.removeAll(handClubs);*/
+        handSpade.clear();
+        handDiamond.clear();
+        handTrumps.clear();
+        handClubs.clear();
+        handHeart.clear();
     }
 
-    public void sortDog(){
+    /*public void sortDog(){
         ArrayList<Card> handPique = new ArrayList();
         ArrayList<Card> handCoeur = new ArrayList();
         ArrayList<Card> handCarreau = new ArrayList();
         ArrayList<Card> handTrefle = new ArrayList();
         ArrayList<Card> handAtout = new ArrayList();
 
-        /* On effectue la meme procédure avec le Chien */
+         On effectue la meme procédure avec le Chien
 
         for (int i = 0; i < this.getDog().size(); i++) {
             if (this.getDog().get(i).getFront().getColor() == TypeCard.Pique) {
@@ -222,19 +252,24 @@ public class Model extends java.util.Observable {
         handAtout.removeAll(handAtout);
         handCarreau.removeAll(handCarreau);
         handTrefle.removeAll(handTrefle);
-    }
+    }*/
 
     public void testLittleDry(){ // a tester aussi, je pense pas que ca marche
         if(!littleDry){
             for(int i=0;i<players.size();i++){
                 int cpt_atout = 0;
-                for(int j=0;j<players.get(i).getCards().size();j++){
-                    if(players.get(i).getCards().get(j).getFront().getColor() == TypeCard.Atout){
+                CardModel c = new CardModel();
+                for(int j=0;j<players.get(i).getCards().size();j++){ // on calcule le nombre d'atouts
+                    if(players.get(i).getCards().get(j).getColor() == TypeCard.Trump){
                         cpt_atout++;
+                        c = players.get(i).getCards().get(j);
                     }
                 }
-                if(cpt_atout < 1)
-                    littleDry = true;
+                if(cpt_atout == 1){ // si il a qu'un atout
+                    if(c.getNumero() == 1){
+                        littleDry = true;
+                    }
+                }
             }
         }
         if(littleDry){
@@ -246,23 +281,23 @@ public class Model extends java.util.Observable {
         return players;
     }
 
-    public ArrayList<Card> getDog() {
+    public ArrayList<CardModel> getDog() {
         return this.dog;
     }
 
-    public ArrayList<Card> getGap() {
+    public ArrayList<CardModel> getGap() {
         return gap;
     }
 
-    public void setView(View v){
-        this.view = v;
+    public ArrayList<CardModel> getCardsDeck() {
+        return cardsDeck;
     }
 
-    public boolean isTake() {
-        return take;
+    public Notification getNotif() {
+        return notif;
     }
 
-    public void setTake(boolean take) {
-        this.take = take;
+    public int getIdPlayerDistrib() {
+        return idPlayerDistrib;
     }
 }

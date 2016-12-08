@@ -20,12 +20,12 @@ public class Controller
             }
         });
 
-        view.getReturnedAll().setOnAction(new EventHandler<ActionEvent>() {
+        /*view.getReturnedAll().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 model.returnedAllCard();
             }
-        });
+        });*/
 
         view.getSort().setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -60,7 +60,8 @@ public class Controller
             @Override
             public void handle(ActionEvent event) {
                 for (int i = 0; i < model.getDog().size(); i++) {
-                    model.getDog().get(i).moveGard();
+                    Card c = view.whichCardView(model.getDog().get(i));
+                    c.moveGard();
                 }
             }
         });

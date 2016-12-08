@@ -15,9 +15,8 @@ public class Main
     {
         this.model = new Model();
         this.view = new View(this.model);
-        model.setView(this.view);
+        model.addObserver(view);
         this.controller = new Controller(this.model, this.view);
-        model.initialiseCardsDeck();
         view.updateDeck();
     }
 

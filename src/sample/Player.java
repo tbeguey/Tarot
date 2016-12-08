@@ -7,21 +7,21 @@ import java.util.Collections;
  * Created by theo on 24/11/16.
  */
 public class Player {
-    private ArrayList<Card> cards = new ArrayList<>();
+    private ArrayList<CardModel> cards = new ArrayList<>();
 
     public Player(){
 
     }
 
-    public void addCardsToAPlayer(Card c){
+    public void addCardsToAPlayer(CardModel c){
         cards.add(c);
     }
 
-    public void removeCardsToAPlayer(Card c){
+    public void removeCardsToAPlayer(CardModel c){
         cards.remove(c);
     }
 
-    public ArrayList<Card> getCards() {
+    public ArrayList<CardModel> getCards() {
         return cards;
     }
 }

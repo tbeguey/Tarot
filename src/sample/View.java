@@ -1,10 +1,9 @@
 package sample;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Observable;
 import java.util.Observer;
-import javafx.event.ActionEvent;
+
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -32,24 +31,38 @@ public class View implements Observer{
     private int positionDogX = 350;
     private int positionDogY = 700;
     private int cardPlaced = 0;
-    private ArrayList<Picture> pictures = new ArrayList();
+    private ArrayList<Card> cardsView = new ArrayList();
 
     public void initialisePicture(){
-        for (int i = 1; i <= 21; i++){
-            this.pictures.add(new Picture("file:./ressources-100/" + i + ".jpg", i, TypeCard.Atout));
+        /*for (int i = 1; i <= 21; i++){
+            this.pictures.add(new ImageView(new Image("file:./ressources-100/" + i + ".jpg")));
         }
         for (int i = 1; i <= 14; i++){
-            this.pictures.add(new Picture("file:./ressources-100/" + i + "Carreau.jpg", i, TypeCard.Carreau));
-            this.pictures.add(new Picture("file:./ressources-100/" + i + "Pique.jpg", i, TypeCard.Pique));
-            this.pictures.add(new Picture("file:./ressources-100/" + i + "Trefle.jpg", i, TypeCard.Trefle));
-            this.pictures.add(new Picture("file:./ressources-100/" + i + "Coeur.jpg", i, TypeCard.Coeur));
+            this.pictures.add(new ImageView(new Image("file:./ressources-100/" + i + "Coeur.jpg")));
+            this.pictures.add(new ImageView(new Image("file:./ressources-100/" + i + "Carreau.jpg")));
+            this.pictures.add(new ImageView(new Image("file:./ressources-100/" + i + "Trefle.jpg")));
+            this.pictures.add(new ImageView(new Image("file:./ressources-100/" + i + "Pique.jpg")));
+
         }
-        this.pictures.add(new Picture("file:./ressources-100/excuse.jpg", 0, TypeCard.Atout));
+        this.pictures.add(new ImageView(new Image("file:./ressources-100/excuse.jpg")));*/
+
+        for (int i = 0; i < model.getCardsDeck().size(); i++) {
+            if(model.getCardsDeck().get(i).getColor() == TypeCard.Trump){
+                this.cardsView.add(new Card(new ImageView("file:./ressources-100/" + model.getCardsDeck().get(i).getNumero()
+                        + ".jpg"), model.getCardsDeck().get(i), positionDeckX, positionDeckY));
+            }
+            else if(model.getCardsDeck().get(i).getColor() == TypeCard.Excuse){
+                this.cardsView.add(new Card(new ImageView("file:./ressources-100/excuse.jpg"),model.getCardsDeck().get(i),positionDeckX,positionDeckY));
+            }
+            else{
+                this.cardsView.add(new Card(new ImageView("file:./ressources-100/" + model.getCardsDeck().get(i).getNumero()
+                        + model.getCardsDeck().get(i).getColor() + ".jpg"),model.getCardsDeck().get(i),positionDeckX,positionDeckY));
+            }
+        }
     }
 
     public View(Model m)
     {
-        initialisePicture();
         this.model = m;
         this.window.setTitle("Tarot - S3B - Tricha Yamin - Beguey Théo");
         this.window.setFullScreen(true);
@@ -81,10 +94,22 @@ public class View implements Observer{
 
         this.window.setScene(this.scene);
         this.window.show();
+        initialisePicture();
     }
 
-    public void updateAddCurrentPlayer(Card c, boolean Hand){
-        if(Hand){
+    public Card whichCardView(CardModel cardModel){
+        for (int i = 0; i < cardsView.size(); i++) {
+            if(cardsView.get(i).getCardModel().getNumero() == cardModel.getNumero() &&
+                    cardsView.get(i).getCardModel().getColor() == cardModel.getColor()){
+                return cardsView.get(i);
+            }
+        }
+        return null;
+    }
+
+    public void updateAddCurrentPlayer(Card c){
+        System.out.print(" 4 :" + c.getCardModel().getNumero());
+        System.out.println(c.getCardModel().getColor());
             c.move(positionCardX-positionDeckX,positionCardY-positionDeckY);
             cardPlaced++;
             this.positionCardX += 150;
@@ -96,38 +121,46 @@ public class View implements Observer{
                 this.positionCardY = 450;
                 this.positionCardX = 150;
             }
-        }
-        else{
-            c.move(positionDogX-positionDeckX,positionDogY-positionDeckY);
-            this.positionDogX +=150;
-        }
     }
 
-    public void updateAddOtherPlayer(Card c, int idPlayer){
-        if(idPlayer == 1){
+    public void updateAddDog(Card c){
+        System.out.print(" 4 :" + c.getCardModel().getNumero());
+        System.out.println(c.getCardModel().getColor());
+        c.move(positionDogX-positionDeckX,positionDogY-positionDeckY);
+        this.positionDogX +=150;
+    }
+
+    public void updateAddOtherPlayer(Card c){
+        System.out.print(" 4 :" + c.getCardModel().getNumero());
+        System.out.println(c.getCardModel().getColor());
+        if(model.getIdPlayerDistrib() == 1){
             c.move(-900,0);
         }
-        else if(idPlayer == 2){
+        else if(model.getIdPlayerDistrib() == 2){
             c.move(0,500);
         }
-        else if(idPlayer == 3){
+        else if(model.getIdPlayerDistrib() == 3){
             c.move(900,0);
         }
-        //c.setX(-50);
-        //c.setY(-50);
     }
 
     public void removeCard(){
-        for(int i=0;i<model.getPlayers().get(0).getCards().size();i++) {
+        for(int i=0;i<cardsView.size();i++) {
             int finalI = i;
-            model.getPlayers().get(0).getCards().get(i).setOnMouseClicked(new EventHandler<MouseEvent>() {
+            cardsView.get(i).setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
+                    System.out.println("LA JE CLIQUE CA REMOVE");
                     if(model.getGap().size() !=6){
-                        model.getPlayers().get(0).removeCardsToAPlayer(model.getPlayers().get(0).getCards().get(finalI));
-                        model.getGap().add(model.getPlayers().get(0).getCards().get(finalI));
-                        model.getPlayers().get(0).getCards().remove(model.getPlayers().get(0).getCards().get(finalI));
-                        root.getChildren().remove(model.getPlayers().get(0).getCards().get(finalI));
+                        if(model.getPlayers().get(0).getCards().get(finalI).getNumero() !=14 ||
+                                (model.getPlayers().get(0).getCards().get(finalI).getNumero() != 1
+                                        && model.getPlayers().get(0).getCards().get(finalI).getColor() == TypeCard.Trump) ||
+                                model.getPlayers().get(0).getCards().get(finalI).getNumero() != 21 ||
+                                model.getPlayers().get(0).getCards().get(finalI).getNumero() != 0){
+                            model.getPlayers().get(0).removeCardsToAPlayer(model.getPlayers().get(0).getCards().get(finalI));
+                            model.getGap().add(model.getPlayers().get(0).getCards().get(finalI));
+                            root.getChildren().remove(model.getPlayers().get(0).getCards().get(finalI));
+                        }
                     }
                     else{
                         positionCardX = 150;
@@ -142,8 +175,10 @@ public class View implements Observer{
     }
 
     public void updateDeck(){
-        for (int i = 0; i < model.getCardsDeck().size(); i++) {
-            this.root.getChildren().add(model.getCardsDeck().get(i));
+            System.out.print("cardViews size : " + cardsView.size());
+        for (int i = 0; i < cardsView.size(); i++) {
+            this.root.getChildren().add(cardsView.get(i));
+            this.root.getChildren().addAll(cardsView.get(i).getNodes());
         }
     }
 
@@ -151,21 +186,7 @@ public class View implements Observer{
         this.root.getChildren().remove(c);
     }
 
-    public ArrayList<Picture> getPictures() {
-        return pictures;
-    }
-    public int getPositionCardX() {
-        return positionCardX;
-    }
-    public int getPositionCardY() {
-        return positionCardY;
-    }
-    public int getPositionDogX() {
-        return positionDogX;
-    }
-    public int getPositionDogY() {
-        return positionDogY;
-    }
+
     public void setPositionCardX(int positionCardX) {
         this.positionCardX = positionCardX;
     }
@@ -194,7 +215,21 @@ public class View implements Observer{
 
     @Override
     public void update(Observable o, Object arg) {
-
+        CardModel cardModel = (CardModel) arg;
+        System.out.print(" 2 :" + cardModel.getNumero());
+        System.out.println(cardModel.getColor());
+        Card c = whichCardView(cardModel);
+        System.out.print(" 3 :" + c.getCardModel().getNumero());
+        System.out.println(c.getCardModel().getColor());
+        if(model.getNotif() == Notification.AddCardCurrentPlayer){
+            updateAddCurrentPlayer(c);
+        }
+        else if(model.getNotif() == Notification.AddOtherPlayer){
+            updateAddOtherPlayer(c);
+        }
+        else if(model.getNotif() == Notification.AddDog){
+            updateAddDog(c);
+        }
     }
 
     public Button getDistribution() {
