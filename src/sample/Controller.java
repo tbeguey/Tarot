@@ -16,7 +16,9 @@ public class Controller
         view.getDistribution().setOnAction(new EventHandler<javafx.event.ActionEvent>() {
             @Override
             public void handle(javafx.event.ActionEvent event) {
-                model.distribution();
+                for(int i=0;i<6;i++){
+                    model.distribution();
+                }
             }
         });
 

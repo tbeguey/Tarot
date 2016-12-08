@@ -10,7 +10,6 @@ public class Player {
     private ArrayList<CardModel> cards = new ArrayList<>();
 
     public Player(){
-
     }
 
     public void addCardsToAPlayer(CardModel c){
