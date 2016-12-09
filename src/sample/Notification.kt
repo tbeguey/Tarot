@@ -1,8 +1,8 @@
 package sample
 
-/**
- * Created by theo on 07/12/16.
- */
+
+ Created by theo on 07/12/16.
+
 enum class Notification {
     AddCardCurrentPlayer,
     AddOtherPlayer,
