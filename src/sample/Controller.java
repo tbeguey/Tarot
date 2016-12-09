@@ -22,12 +22,12 @@ public class Controller
             }
         });
 
-        view.getReturnedAll().setOnAction(new EventHandler<ActionEvent>() {
+        /*view.getReturnedAll().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                view.returnedAllCard();
+                model.returnedAllCard();
             }
-        });
+        });*/
 
         view.getSort().setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -48,10 +48,6 @@ public class Controller
             @Override
             public void handle(ActionEvent event) {
                 view.setCardPlaced(0);
-                for (int i = 0; i < model.getDog().size(); i++) {
-                    Card c = view.whichCardView(model.getDog().get(i));
-                    c.flip();
-                }
                 model.dogToHand();
                 view.setPositionCardX(150);
                 view.setPositionCardY(50);
@@ -59,7 +55,6 @@ public class Controller
                 view.setPositionDogY(700);
                 model.sortHand();
                 view.removeCard();
-                System.out.println(model.getPlayers().get(0).getCards().size());
             }
         });
 
@@ -68,9 +63,20 @@ public class Controller
             public void handle(ActionEvent event) {
                 for (int i = 0; i < model.getDog().size(); i++) {
                     Card c = view.whichCardView(model.getDog().get(i));
-                    c.flip();
                     c.moveGard();
                 }
+            }
+        });
+
+        view.getNext().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                view.setCardPlaced(0);
+                view.setPositionCardX(150);
+                view.setPositionCardY(50);
+                view.setPositionDogX(350);
+                view.setPositionDogY(700);
+                model.sortHand();
             }
         });
     }

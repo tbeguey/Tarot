@@ -23,6 +23,7 @@ public class View implements Observer{
     private Button sort = new Button();
     private Button take = new Button();
     private Button gard = new Button();
+    private Button next = new Button();
     private int positionDeckX = 750;
     private int positionDeckY = 400;
     private int positionCardX = 150;
@@ -33,6 +34,18 @@ public class View implements Observer{
     private ArrayList<Card> cardsView = new ArrayList();
 
     public void initialisePicture(){
+        /*for (int i = 1; i <= 21; i++){
+            this.pictures.add(new ImageView(new Image("file:./ressources-100/" + i + ".jpg")));
+        }
+        for (int i = 1; i <= 14; i++){
+            this.pictures.add(new ImageView(new Image("file:./ressources-100/" + i + "Coeur.jpg")));
+            this.pictures.add(new ImageView(new Image("file:./ressources-100/" + i + "Carreau.jpg")));
+            this.pictures.add(new ImageView(new Image("file:./ressources-100/" + i + "Trefle.jpg")));
+            this.pictures.add(new ImageView(new Image("file:./ressources-100/" + i + "Pique.jpg")));
+
+        }
+        this.pictures.add(new ImageView(new Image("file:./ressources-100/excuse.jpg")));*/
+
         for (int i = 0; i < model.getCardsDeck().size(); i++) {
             if(model.getCardsDeck().get(i).getColor() == TypeCard.Trump){
                 this.cardsView.add(new Card(new ImageView("file:./ressources-100/" + model.getCardsDeck().get(i).getNumero()
@@ -65,7 +78,10 @@ public class View implements Observer{
         this.take.setLayoutX(800.0D);
         this.take.setLayoutY(10.0D);
         this.take.setText("Prise");
-        this.gard.setText("Garde sans le Chien");
+        this.next.setText("Test");
+        this.next.setLayoutX(1000.0D);
+        this.next.setLayoutY(10.0D);
+        this.gard.setText("Garde");
         this.gard.setLayoutX(1200.0D);
         this.gard.setLayoutY(10.0D);
 
@@ -73,6 +89,7 @@ public class View implements Observer{
         this.root.getChildren().add(this.returnedAll);
         this.root.getChildren().add(this.sort);
         this.root.getChildren().add(this.take);
+        this.root.getChildren().add(this.next);
         this.root.getChildren().add(this.gard);
 
         this.window.setScene(this.scene);
@@ -128,53 +145,40 @@ public class View implements Observer{
     }
 
     public void removeCard(){
-        for(int i=0;i<model.getPlayers().get(0).getCards().size();i++) {
+        for(int i=0;i<cardsView.size();i++) {
             int finalI = i;
-            /*cardsView.get(i).setOnMouseClicked(new EventHandler<MouseEvent>() {
+            cardsView.get(i).setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
-                    System.out.println("LA JE CLIQUE CA REMOVE");*/
+                    System.out.println("LA JE CLIQUE CA REMOVE");
                     if(model.getGap().size() !=6){
                         if(model.getPlayers().get(0).getCards().get(finalI).getNumero() !=14 ||
                                 (model.getPlayers().get(0).getCards().get(finalI).getNumero() != 1
                                         && model.getPlayers().get(0).getCards().get(finalI).getColor() == TypeCard.Trump) ||
                                 model.getPlayers().get(0).getCards().get(finalI).getNumero() != 21 ||
                                 model.getPlayers().get(0).getCards().get(finalI).getNumero() != 0){
-                            model.getGap().add(model.getPlayers().get(0).getCards().get(finalI));
                             model.getPlayers().get(0).removeCardsToAPlayer(model.getPlayers().get(0).getCards().get(finalI));
-                            //root.getChildren().remove(model.getPlayers().get(0).getCards().get(finalI));
+                            model.getGap().add(model.getPlayers().get(0).getCards().get(finalI));
+                            root.getChildren().remove(model.getPlayers().get(0).getCards().get(finalI));
                         }
                     }
                     else{
-                        for (int j = 0; j < model.getGap().size(); j++) {
-                            Card c = whichCardView(model.getGap().get(j));
-                            root.getChildren().removeAll(c.getNodes());
-                        }
-                        cardPlaced = 0;
                         positionCardX = 150;
                         positionCardY = 50;
                         positionDogX = 350;
                         positionDogY = 700;
                         model.sortHand();
-                        break;
                     }
                 }
-            //});
+            });
         }
-    //}
+    }
 
     public void updateDeck(){
             System.out.print("cardViews size : " + cardsView.size());
         for (int i = 0; i < cardsView.size(); i++) {
-            //this.root.getChildren().add(cardsView.get(i));
+            this.root.getChildren().add(cardsView.get(i));
             this.root.getChildren().addAll(cardsView.get(i).getNodes());
-        }
-    }
-
-    public void returnedAllCard(){
-        for (int i = 0; i < cardsView.size(); i++) {
-            if(!cardsView.get(i).getCardModel().isInDog())
-                cardsView.get(i).flip();
         }
     }
 
@@ -245,4 +249,6 @@ public class View implements Observer{
     }
 
     public Button getGard() { return gard; }
+
+    public Button getNext() { return next; }
 }
